@@ -1,0 +1,1 @@
+- [2025-12-] Iteration : Designed frontend state for predictive node visualization.
