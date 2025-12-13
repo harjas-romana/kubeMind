@@ -30,3 +30,4 @@
 - [2025-12-11] Iteration 1: Designed frontend state for predictive node visualization.
 - [2025-12-11] Iteration 2: Designed frontend state for predictive node visualization.
 - [2025-12-12] Research: Investigating WebSocket vs Polling for real-time pod metrics.
+- [2025-12-13] Research: Investigating WebSocket vs Polling for real-time pod metrics.
