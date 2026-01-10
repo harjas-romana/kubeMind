@@ -31,6 +31,37 @@ class MetricRequest(BaseModel):
 class VoiceRequest(BaseModel):
     text: str
 
+class ConnectionManager:
+    def __init__(self):
+        # A list to keep track of all connected Frontends
+        self.active_connections: list[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: str):
+        # Send the message to ALL connected Frontends
+        for connection in self.active_connections:
+            await connection.send_text(message)
+
+manager = ConnectionManager()
+
+@app.websocket("/ws/stats")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            # Wait for data from the Client (Agent or Frontend)
+            data = await websocket.receive_text()
+            # Broadcast it to everyone else
+            await manager.broadcast(data)
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+
 @app.post("/analyze")
 async def analyze_metrics(data: MetricRequest):
     # System Prompt: Strict JSON enforcement
